@@ -1,0 +1,44 @@
+#!/usr/bin/env expect -f
+
+if {$argc < 1} {
+    puts stderr "usage: drive-agent.expect <binary>"
+    exit 2
+}
+
+set bin [lindex $argv 0]
+set idle_secs 4
+set hard_cap 90
+
+log_user 1
+
+if {[catch {spawn -noecho $bin} err]} {
+    puts stderr "failed to spawn $bin: $err"
+    exit 3
+}
+
+set pid [exp_pid]
+
+sleep 2
+send -- "Hey!"
+send "\r"
+sleep 2
+
+set start [clock seconds]
+set timeout $idle_secs
+expect {
+    -re ".+" {
+        if {[expr {[clock seconds] - $start}] < $hard_cap} {
+            exp_continue
+        }
+    }
+    timeout { }
+}
+
+send "\x03"
+sleep 0.5
+send "\x03"
+
+set timeout 5
+expect eof
+catch { exec kill -TERM $pid } _
+catch { exec kill -KILL $pid } _

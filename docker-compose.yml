@@ -1,0 +1,19 @@
+services:
+  agent-poke:
+    build: .
+    image: agent-poke:local
+    init: true
+    environment:
+      TZ: Europe/Istanbul
+      AGENTS: codex claude
+    volumes:
+      - agent_home:/home/agent
+      - ./logs:/app/logs
+      - ./workspace:/workspace
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  agent_home:

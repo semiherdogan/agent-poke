@@ -1,0 +1,6 @@
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin:/bin
+
+30 6 * * * /app/scripts/run-checkin.sh
+30 11 * * * /app/scripts/run-checkin.sh
+30 16 * * * /app/scripts/run-checkin.sh
