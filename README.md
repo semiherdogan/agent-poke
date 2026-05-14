@@ -24,7 +24,7 @@ Codex uses the device auth flow:
 docker compose run --rm agent-poke login-codex
 ```
 
-Claude Code currently uses an interactive CLI login flow. Start Claude, run `/login`, choose the Claude.ai subscription option, complete the browser/device flow, then exit:
+Claude Code uses its official auth command with the Claude.ai subscription flow:
 
 ```sh
 docker compose run --rm agent-poke login-claude
@@ -48,6 +48,13 @@ docker compose run --rm agent-poke checkin claude
 ```
 
 Logs are written to `logs/run-*.log`.
+
+Check-ins are non-interactive:
+
+- Codex: `codex exec --skip-git-repo-check "Hey!"`
+- Claude: `claude -p "Hey!"`
+
+Override the message with `CHECKIN_PROMPT` in `docker-compose.yml`.
 
 ## Run Scheduler
 

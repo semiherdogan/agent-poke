@@ -6,7 +6,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
-        expect \
         git \
         openssh-client \
         ripgrep \
@@ -21,7 +20,7 @@ RUN useradd --create-home --shell /bin/bash agent
 WORKDIR /app
 COPY --chown=agent:agent . /app
 
-RUN chmod +x /app/scripts/*.sh /app/lib/*.expect
+RUN chmod +x /app/scripts/*.sh
 
 USER agent
 ENV HOME=/home/agent \

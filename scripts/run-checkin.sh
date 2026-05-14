@@ -2,7 +2,6 @@
 set -uo pipefail
 
 LOG_DIR="/app/logs"
-DRIVER="/app/lib/drive-agent.expect"
 mkdir -p "$LOG_DIR"
 
 export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
@@ -31,7 +30,17 @@ run_agent() {
         return
     fi
 
-    expect "$DRIVER" "$name" || echo "[warn] $name driver exited non-zero"
+    case "$name" in
+        codex)
+            codex exec --skip-git-repo-check "${CHECKIN_PROMPT:-Hey!}" || echo "[warn] codex check-in exited non-zero"
+            ;;
+        claude)
+            claude -p "${CHECKIN_PROMPT:-Hey!}" || echo "[warn] claude check-in exited non-zero"
+            ;;
+        *)
+            echo "[skip] unsupported agent '$name'"
+            ;;
+    esac
     echo
 }
 
