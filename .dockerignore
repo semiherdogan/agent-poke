@@ -1,4 +1,5 @@
 .git
+deploy.sh
 logs/*
 workspace/*
 node_modules

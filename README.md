@@ -30,18 +30,19 @@ Codex uses the same static schedule. Change times in `config/schedule.cron` if n
 docker compose build
 ```
 
-## Deploy
+## Server Deployment
 
-From your local machine:
-
-```sh
-./deploy.sh
-```
-
-The deploy script syncs the project to `semih-server:/opt/apps/projects/agent-poke`, creates `logs` and `workspace`, fixes their ownership for the container user, and runs:
+Copy the repository to a server with Docker installed, then run:
 
 ```sh
 docker compose up -d --build
+```
+
+Before starting the service, make sure the runtime directories exist and are writable by the container user:
+
+```sh
+mkdir -p logs workspace
+chown -R 1001:1001 logs workspace
 ```
 
 ## Login
@@ -150,7 +151,6 @@ docker compose logs -f agent-poke
 If you see `Permission denied` for `/app/logs/run-*.log`, fix host directory ownership:
 
 ```sh
-cd /opt/apps/projects/agent-poke
 mkdir -p logs workspace
 chown -R 1001:1001 logs workspace
 ```
@@ -162,4 +162,4 @@ The container user is `agent` with UID/GID `1001:1001`.
 - Keep the `agent_home` volume. Removing it removes CLI login state.
 - Keep `/workspace` stable. If Codex or Claude asks to trust the working directory, approve it once during manual login or manual check.
 - Do not bake credentials into the image.
-- After changing scripts or Dockerfile, redeploy or run `docker compose up -d --build`.
+- After changing scripts or Dockerfile, run `docker compose up -d --build`.
