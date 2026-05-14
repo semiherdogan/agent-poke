@@ -209,6 +209,7 @@ chown -R 1001:1001 logs workspace
 ```
 
 The container user is `agent` with UID/GID `1001:1001`.
+Depending on your server setup, the `chown` command may need `sudo`.
 
 ## Server Notes
 
