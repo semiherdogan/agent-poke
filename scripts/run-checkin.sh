@@ -86,7 +86,7 @@ run_agent() {
             status=1
         fi
 
-        if [ -s "$TMP_DIR/$agent.log" ]; then
+        if grep -q '[^[:space:]]' "$TMP_DIR/$agent.log"; then
             echo
             echo "=== $(date '+%Y-%m-%d %H:%M:%S') :: $agent ==="
             cat "$TMP_DIR/$agent.log"
