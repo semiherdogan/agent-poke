@@ -217,3 +217,7 @@ Depending on your server setup, the `chown` command may need `sudo`.
 - Keep `/workspace` stable. If Codex or Claude asks to trust the working directory, approve it once during manual login or manual check.
 - Do not bake credentials into the image.
 - After changing scripts or Dockerfile, run `docker compose up -d --build`.
+
+## License
+
+MIT
