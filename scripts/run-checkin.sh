@@ -88,8 +88,10 @@ run_agent() {
             status=1
         fi
 
-        echo
-        cat "$TMP_DIR/$agent.log"
+        if [ -s "$TMP_DIR/$agent.log" ]; then
+            echo
+            cat "$TMP_DIR/$agent.log"
+        fi
     done
 
     echo "=== done @ $(date '+%Y-%m-%d %H:%M:%S') ==="
