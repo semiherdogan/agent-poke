@@ -4,6 +4,7 @@ ARG SUPERCRONIC_VERSION=v0.2.34
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        bubblewrap \
         ca-certificates \
         curl \
         expect \
