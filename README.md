@@ -16,17 +16,17 @@ TZ: Europe/Istanbul
 
 Default times:
 
-- 06:30
-- 11:32
-- 16:34
-- 21:36
+- 06:00
+- 11:06
+- 16:12
+- 21:18
 
 These times are chosen for Claude's critical `09:00-19:00` usage window:
 
-- `06:30` opens the first window before work starts.
-- `11:32` is 5 hours + 2 minutes later.
-- `16:34` is another 5 hours + 2 minutes later and carries usage past 19:00.
-- `21:36` opens an evening window.
+- `06:00` opens the first window before work starts.
+- `11:06` is 5 hours + 6 minutes later.
+- `16:12` is another 5 hours + 6 minutes later and carries usage past 19:00.
+- `21:18` opens an evening window with a small buffer after the previous window.
 
 Codex uses the same static schedule. Change times in `config/schedule.cron` if needed.
 
@@ -197,6 +197,12 @@ Scheduler logs are visible with:
 
 ```sh
 docker compose logs -f agent-poke
+```
+
+Raw Codex and Claude TUI output is hidden by default because it contains terminal escape sequences. To debug raw agent output, set:
+
+```yaml
+RAW_AGENT_OUTPUT: 1
 ```
 
 ## Server Permission Fix

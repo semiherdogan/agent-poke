@@ -14,7 +14,11 @@ if {$argc >= 2} {
 set idle_secs 4
 set hard_cap 90
 
-log_user 1
+set raw_output 0
+if {[info exists env(RAW_AGENT_OUTPUT)] && $env(RAW_AGENT_OUTPUT) eq "1"} {
+    set raw_output 1
+}
+log_user $raw_output
 
 if {[catch {spawn -noecho $bin $message} err]} {
     puts stderr "failed to spawn $bin: $err"

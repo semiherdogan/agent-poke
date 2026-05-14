@@ -8,6 +8,7 @@ services:
       AGENTS: codex claude
       CHECKIN_PROMPT: Hey!
       LOG_KEEP: 20
+      RAW_AGENT_OUTPUT: 0
     volumes:
       - agent_home:/home/agent
       - ./logs:/app/logs
