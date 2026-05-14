@@ -16,16 +16,13 @@ set hard_cap 90
 
 log_user 1
 
-if {[catch {spawn -noecho $bin} err]} {
+if {[catch {spawn -noecho -- $bin $message} err]} {
     puts stderr "failed to spawn $bin: $err"
     exit 3
 }
 
 set pid [exp_pid]
 
-sleep 2
-send -- "$message"
-send "\r"
 sleep 2
 
 set start [clock seconds]

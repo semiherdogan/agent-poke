@@ -132,8 +132,7 @@ docker compose run --rm agent-poke checkin claude
 
 Check-ins use the same flow for both agents:
 
-- start the interactive CLI
-- send `CHECKIN_PROMPT`
+- start the interactive CLI with `CHECKIN_PROMPT` as the initial prompt
 - wait for output to settle
 - exit the CLI
 
