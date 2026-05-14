@@ -6,13 +6,23 @@ The container does not automate account login. The user logs in once through eac
 
 ## Schedule
 
-Default schedule, using the `TZ` value in `docker-compose.yml`:
+The schedule is static and shared by Codex and Claude.
+
+Default times:
 
 - 06:30
-- 11:30
-- 16:30
+- 11:32
+- 16:34
+- 21:36
 
-The schedule is defined in `config/schedule.cron`.
+These times are chosen for Claude's critical `09:00-19:00` usage window:
+
+- `06:30` opens the first window before work starts.
+- `11:32` is 5 hours + 2 minutes later.
+- `16:34` is another 5 hours + 2 minutes later and carries usage past 19:00.
+- `21:36` opens an evening window.
+
+Codex uses the same static schedule. Change times in `config/schedule.cron` if needed.
 
 ## Build
 
@@ -94,7 +104,7 @@ Override the message with `CHECKIN_PROMPT` in `docker-compose.yml`.
 
 ## Run Scheduler
 
-Start the scheduled service:
+Start the scheduler:
 
 ```sh
 docker compose up -d
@@ -128,6 +138,12 @@ tail -n 120 logs/run-*.log
 ```
 
 The runner keeps the 20 most recent `run-*.log` files.
+
+Scheduler logs are visible with:
+
+```sh
+docker compose logs -f agent-poke
+```
 
 ## Server Permission Fix
 

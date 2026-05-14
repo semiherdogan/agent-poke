@@ -6,6 +6,7 @@ services:
     environment:
       TZ: Europe/Istanbul
       AGENTS: codex claude
+      CHECKIN_PROMPT: Hey!
     volumes:
       - agent_home:/home/agent
       - ./logs:/app/logs

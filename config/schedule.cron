@@ -2,5 +2,6 @@ SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/bin
 
 30 6 * * * /app/scripts/run-checkin.sh
-31 11 * * * /app/scripts/run-checkin.sh
-32 16 * * * /app/scripts/run-checkin.sh
+32 11 * * * /app/scripts/run-checkin.sh
+34 16 * * * /app/scripts/run-checkin.sh
+36 21 * * * /app/scripts/run-checkin.sh

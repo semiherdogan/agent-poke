@@ -25,20 +25,25 @@ run_agent() {
     local name="$1"
 
     echo "=== $(date '+%Y-%m-%d %H:%M:%S') :: $name ==="
-    if ! command -v "$name" >/dev/null 2>&1; then
-        echo "[skip] '$name' not on PATH"
-        return
-    fi
 
     case "$name" in
         codex)
-            codex exec --skip-git-repo-check "${CHECKIN_PROMPT:-Hey!}" || echo "[warn] codex check-in exited non-zero"
+            if ! command -v codex >/dev/null 2>&1; then
+                echo "[skip] codex not on PATH"
+                return 127
+            fi
+            codex exec --skip-git-repo-check "${CHECKIN_PROMPT:-Hey!}"
             ;;
         claude)
-            claude -p "${CHECKIN_PROMPT:-Hey!}" || echo "[warn] claude check-in exited non-zero"
+            if ! command -v claude >/dev/null 2>&1; then
+                echo "[skip] claude not on PATH"
+                return 127
+            fi
+            claude -p "${CHECKIN_PROMPT:-Hey!}"
             ;;
         *)
             echo "[skip] unsupported agent '$name'"
+            return 2
             ;;
     esac
     echo
@@ -52,9 +57,14 @@ run_agent() {
     echo
 
     cd /workspace
+    status=0
     for agent in "${AGENTS[@]}"; do
-        run_agent "$agent"
+        if ! run_agent "$agent"; then
+            echo "[warn] $agent check-in exited non-zero"
+            status=1
+        fi
     done
 
     echo "=== done @ $(date '+%Y-%m-%d %H:%M:%S') ==="
+    exit "$status"
 } >>"$LOG" 2>&1
