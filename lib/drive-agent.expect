@@ -16,7 +16,7 @@ set hard_cap 90
 
 log_user 1
 
-if {[catch {spawn -noecho -- $bin $message} err]} {
+if {[catch {spawn -noecho $bin $message} err]} {
     puts stderr "failed to spawn $bin: $err"
     exit 3
 }
