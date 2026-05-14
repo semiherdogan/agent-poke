@@ -1,4 +1,4 @@
-#!/usr/bin/env expect -f
+#!/usr/bin/expect -f
 
 if {$argc < 1} {
     puts stderr "usage: drive-agent.expect <binary> [message]"
@@ -40,11 +40,11 @@ expect {
     timeout { }
 }
 
-send "\x03"
+catch { send "\x03" } _
 sleep 0.5
-send "\x03"
+catch { send "\x03" } _
 
 set timeout 5
-expect eof
+catch { expect eof } _
 catch { exec kill -TERM $pid } _
 catch { exec kill -KILL $pid } _

@@ -205,6 +205,8 @@ Raw Codex and Claude TUI output is hidden by default because it contains termina
 RAW_AGENT_OUTPUT: 1
 ```
 
+Default logs only record start, success, and failure status for each agent.
+
 ## Server Permission Fix
 
 If you see `Permission denied` for `/app/logs/run-*.log`, fix host directory ownership:
@@ -223,6 +225,12 @@ Depending on your server setup, the `chown` command may need `sudo`.
 - Keep `/workspace` stable. If Codex or Claude asks to trust the working directory, approve it once during manual login or manual check.
 - Do not bake credentials into the image.
 - After changing scripts or Dockerfile, run `docker compose up -d --build`.
+
+## Roadmap
+
+- Optional session transcript summaries: read the latest local Codex and Claude JSONL session files and extract the final assistant reply for cleaner logs. This should stay opt-in because session transcripts may contain prompts, tool output, and file content. TUI output parsing is intentionally avoided.
+- Configurable per-agent schedules if the shared static schedule becomes too limiting.
+- Healthcheck command for validating login state, writable logs, workspace trust, and CLI availability before enabling the scheduler.
 
 ## License
 
