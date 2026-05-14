@@ -8,6 +8,12 @@ The container does not automate account login. The user logs in once through eac
 
 The schedule is static and shared by Codex and Claude.
 
+The timezone is configured with `TZ` in `docker-compose.yml`. The default is:
+
+```yaml
+TZ: Europe/Istanbul
+```
+
 Default times:
 
 - 06:30
@@ -24,25 +30,51 @@ These times are chosen for Claude's critical `09:00-19:00` usage window:
 
 Codex uses the same static schedule. Change times in `config/schedule.cron` if needed.
 
-## Build
+## Quick Start
 
 ```sh
+git clone https://github.com/semiherdogan/agent-poke.git
+cd agent-poke
 docker compose build
+```
+
+Log in once:
+
+```sh
+docker compose run --rm agent-poke login-codex
+docker compose run --rm agent-poke login-claude
+```
+
+Run a manual check:
+
+```sh
+docker compose run --rm agent-poke checkin
+```
+
+Start the scheduler:
+
+```sh
+docker compose up -d
 ```
 
 ## Server Deployment
 
-Copy the repository to a server with Docker installed, then run:
+On a server with Docker installed, clone the repository and prepare writable runtime directories:
 
 ```sh
-docker compose up -d --build
-```
-
-Before starting the service, make sure the runtime directories exist and are writable by the container user:
-
-```sh
+git clone https://github.com/semiherdogan/agent-poke.git
+cd agent-poke
 mkdir -p logs workspace
 chown -R 1001:1001 logs workspace
+```
+
+Then follow the login and scheduler steps above.
+
+If you already cloned the repository, update and rebuild with:
+
+```sh
+git pull
+docker compose up -d --build
 ```
 
 ## Login
@@ -138,7 +170,11 @@ ls -lt logs
 tail -n 120 logs/run-*.log
 ```
 
-The runner keeps the 20 most recent `run-*.log` files.
+The runner keeps the most recent `run-*.log` files based on `LOG_KEEP` in `docker-compose.yml`. The default is:
+
+```yaml
+LOG_KEEP: 20
+```
 
 Scheduler logs are visible with:
 

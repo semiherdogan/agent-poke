@@ -7,6 +7,7 @@ services:
       TZ: Europe/Istanbul
       AGENTS: codex claude
       CHECKIN_PROMPT: Hey!
+      LOG_KEEP: 20
     volumes:
       - agent_home:/home/agent
       - ./logs:/app/logs

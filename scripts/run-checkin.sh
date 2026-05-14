@@ -2,6 +2,7 @@
 set -uo pipefail
 
 LOG_DIR="/app/logs"
+LOG_KEEP="${LOG_KEEP:-20}"
 mkdir -p "$LOG_DIR"
 
 export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
@@ -12,7 +13,7 @@ LOG="$LOG_DIR/run-$STAMP.log"
 
 find "$LOG_DIR" -name 'run-*.log' -type f -printf '%T@ %p\n' 2>/dev/null \
     | sort -rn \
-    | awk 'NR > 20 {print $2}' \
+    | awk -v keep="$LOG_KEEP" 'NR > keep {print $2}' \
     | xargs -r rm -f 2>/dev/null || true
 
 if [ "$#" -gt 0 ]; then
