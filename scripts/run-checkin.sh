@@ -29,8 +29,6 @@ fi
 run_agent() {
     local name="$1"
 
-    echo "=== $(date '+%Y-%m-%d %H:%M:%S') :: $name ==="
-
     case "$name" in
         codex)
             if ! command -v codex >/dev/null 2>&1; then
@@ -90,6 +88,7 @@ run_agent() {
 
         if [ -s "$TMP_DIR/$agent.log" ]; then
             echo
+            echo "=== $(date '+%Y-%m-%d %H:%M:%S') :: $agent ==="
             cat "$TMP_DIR/$agent.log"
         fi
     done
