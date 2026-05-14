@@ -6,6 +6,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
+        expect \
         git \
         openssh-client \
         ripgrep \
@@ -21,6 +22,7 @@ WORKDIR /app
 COPY --chown=agent:agent . /app
 
 RUN chmod +x /app/scripts/*.sh
+RUN chmod +x /app/lib/*.expect
 
 USER agent
 ENV HOME=/home/agent \

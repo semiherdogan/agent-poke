@@ -1,6 +1,6 @@
 # agent-poke
 
-Runs Codex and Claude Code at fixed times so their usage windows are opened by a tiny non-interactive check-in message.
+Runs Codex and Claude Code at fixed times with a tiny scheduled check-in message.
 
 The container does not automate account login. The user logs in once through each official CLI flow, and credentials stay in the persistent Docker home volume.
 
@@ -50,6 +50,8 @@ Run a manual check:
 ```sh
 docker compose run --rm agent-poke checkin
 ```
+
+This verifies that saved login state works inside the container. It also lets you answer any first-run workspace trust prompt before the scheduled runs start.
 
 Start the scheduler:
 
@@ -128,12 +130,28 @@ docker compose run --rm agent-poke checkin codex
 docker compose run --rm agent-poke checkin claude
 ```
 
-Check-ins are non-interactive:
+Check-ins use the same flow for both agents:
 
-- Codex: `codex exec --skip-git-repo-check "Hey!"`
-- Claude: `claude -p "Hey!"`
+- start the interactive CLI
+- send `CHECKIN_PROMPT`
+- wait for output to settle
+- exit the CLI
+
+Agents are started in parallel during the same scheduled run, so a slow response from one CLI does not delay the other.
 
 Override the message with `CHECKIN_PROMPT` in `docker-compose.yml`.
+
+## Trust and Usage Notes
+
+After login, run one manual check so Codex and Claude can ask and remember any workspace trust prompt:
+
+```sh
+docker compose run --rm agent-poke checkin
+```
+
+Scheduled runs use the same interactive path. That keeps Codex and Claude behavior aligned with normal CLI usage instead of using programmatic modes like `codex exec` or `claude -p`.
+
+These check-ins make real model requests and count as usage for their respective CLIs.
 
 ## Run Scheduler
 

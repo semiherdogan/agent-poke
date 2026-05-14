@@ -3,6 +3,7 @@ set -uo pipefail
 
 LOG_DIR="/app/logs"
 LOG_KEEP="${LOG_KEEP:-20}"
+DRIVER="/app/lib/drive-agent.expect"
 mkdir -p "$LOG_DIR"
 
 export PATH="/usr/local/bin:/usr/bin:/bin:${PATH:-}"
@@ -10,6 +11,9 @@ export HOME="${HOME:-/home/agent}"
 
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG="$LOG_DIR/run-$STAMP.log"
+TMP_DIR="$LOG_DIR/.run-$STAMP"
+mkdir -p "$TMP_DIR"
+trap 'rm -rf "$TMP_DIR"' EXIT
 
 find "$LOG_DIR" -name 'run-*.log' -type f -printf '%T@ %p\n' 2>/dev/null \
     | sort -rn \
@@ -33,14 +37,14 @@ run_agent() {
                 echo "[skip] codex not on PATH"
                 return 127
             fi
-            codex exec --skip-git-repo-check "${CHECKIN_PROMPT:-Hey!}"
+            expect "$DRIVER" codex "${CHECKIN_PROMPT:-Hey!}"
             ;;
         claude)
             if ! command -v claude >/dev/null 2>&1; then
                 echo "[skip] claude not on PATH"
                 return 127
             fi
-            claude -p "${CHECKIN_PROMPT:-Hey!}"
+            expect "$DRIVER" claude "${CHECKIN_PROMPT:-Hey!}"
             ;;
         *)
             echo "[skip] unsupported agent '$name'"
@@ -59,11 +63,33 @@ run_agent() {
 
     cd /workspace
     status=0
+    pids=()
+    names=()
+
     for agent in "${AGENTS[@]}"; do
-        if ! run_agent "$agent"; then
+        (
+            run_agent "$agent"
+        ) >"$TMP_DIR/$agent.log" 2>&1 &
+
+        pid="$!"
+        pids+=("$pid")
+        names+=("$agent")
+        echo "[start] $agent pid=$pid"
+    done
+
+    for index in "${!pids[@]}"; do
+        agent="${names[$index]}"
+        pid="${pids[$index]}"
+
+        if wait "$pid"; then
+            echo "[ok] $agent"
+        else
             echo "[warn] $agent check-in exited non-zero"
             status=1
         fi
+
+        echo
+        cat "$TMP_DIR/$agent.log"
     done
 
     echo "=== done @ $(date '+%Y-%m-%d %H:%M:%S') ==="
