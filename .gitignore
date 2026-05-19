@@ -2,4 +2,5 @@ logs/*
 !logs/.gitkeep
 workspace/*
 !workspace/.gitkeep
+.env
 deploy.sh

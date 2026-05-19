@@ -44,6 +44,20 @@ run_agent() {
             fi
             expect "$DRIVER" claude "${CHECKIN_PROMPT:-Hey!}"
             ;;
+        ollama)
+            if [ -z "${OLLAMA_API_KEY:-}" ]; then
+                echo "[skip] ollama missing OLLAMA_API_KEY"
+                return 127
+            fi
+            curl -fsS --max-time "${OLLAMA_TIMEOUT_SECS:-90}" https://ollama.com/api/chat \
+                -H "Authorization: Bearer $OLLAMA_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$(jq -n \
+                    --arg model "${OLLAMA_MODEL:-gpt-oss:120b}" \
+                    --arg content "${CHECKIN_PROMPT:-Hey!}" \
+                    '{model: $model, messages: [{role: "user", content: $content}], stream: false}')" \
+                | jq -r '"[ok] ollama model=\(.model) done=\(.done)", (.message.content // empty)'
+            ;;
         *)
             echo "[skip] unsupported agent '$name'"
             return 2

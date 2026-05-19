@@ -9,6 +9,7 @@ RUN apt-get update \
         curl \
         expect \
         git \
+        jq \
         openssh-client \
         ripgrep \
     && curl -fsSL "https://github.com/aptible/supercronic/releases/download/${SUPERCRONIC_VERSION}/supercronic-linux-amd64" -o /usr/local/bin/supercronic \

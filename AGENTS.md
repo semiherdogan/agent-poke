@@ -8,10 +8,7 @@ Current supported agents:
 
 - `codex`
 - `claude`
-
-Planned/acceptable agent:
-
-- `ollama` via Ollama Cloud, preferably with `OLLAMA_API_KEY` from `.env` or the Compose environment
+- `ollama` via Ollama Cloud
 
 ## How it works
 
@@ -25,6 +22,8 @@ The scheduler is a Docker service. `supercronic` reads `config/schedule.cron` an
 - keeps only the newest `LOG_KEEP` run logs
 
 For Codex and Claude, `lib/drive-agent.expect` launches the interactive CLI with `CHECKIN_PROMPT`, waits for output to settle, then exits the process.
+
+For Ollama Cloud, `run-checkin.sh` uses `curl` to send `CHECKIN_PROMPT` to `https://ollama.com/api/chat` with `stream: false`.
 
 This is intentional. The check-in should be a real model request, not just a dry command or health check. If a provider's 5-hour usage window starts when a real prompt/message is sent, this path is meant to trigger that window.
 
@@ -73,27 +72,27 @@ Manual runs can target one or more agents:
 rtk docker compose run --rm agent-poke checkin codex
 rtk docker compose run --rm agent-poke checkin claude
 rtk docker compose run --rm agent-poke checkin codex claude
-```
-
-After adding Ollama support, the expected manual shape is:
-
-```sh
 rtk docker compose run --rm agent-poke checkin ollama
 ```
 
-## Adding Ollama Cloud
+## Ollama Cloud
 
-Preferred approach:
+Ollama Cloud uses direct API access. Put secrets in `.env`, not in git:
 
-- add `ollama` as a new case in `scripts/run-checkin.sh`
-- require `OLLAMA_API_KEY`
-- use `OLLAMA_MODEL`, defaulting to a Cloud model such as `gpt-oss:120b`
-- send `CHECKIN_PROMPT` to Ollama Cloud's chat/generate API
-- skip cleanly with a clear log line if `OLLAMA_API_KEY` is missing
+```sh
+OLLAMA_API_KEY=your_api_key
+OLLAMA_MODEL=gpt-oss:120b
+```
 
-Do not log secrets. Do not commit `.env`.
+`docker-compose.yml` passes those values into the container. `OLLAMA_MODEL` defaults to `gpt-oss:120b`.
 
-The first verification should be a manual check-in with logs confirming a real response:
+If `ollama` is enabled but `OLLAMA_API_KEY` is missing, the runner logs:
+
+```text
+[skip] ollama missing OLLAMA_API_KEY
+```
+
+The first verification should be a manual check-in with logs confirming a real response from Ollama:
 
 ```sh
 rtk docker compose run --rm agent-poke checkin ollama
@@ -103,7 +102,4 @@ rtk docker compose run --rm agent-poke checkin ollama
 
 - Keep changes narrow.
 - Prefer project-provided commands.
-- Prefix shell commands with `rtk`.
-- Do not commit, push, branch, or open PRs unless explicitly requested.
 - For behavior changes, run the narrowest relevant check first.
-

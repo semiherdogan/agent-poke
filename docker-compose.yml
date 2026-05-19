@@ -8,6 +8,8 @@ services:
       AGENTS: codex claude
       CHECKIN_PROMPT: Hey!
       LOG_KEEP: 20
+      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-gpt-oss:120b}
       RAW_AGENT_OUTPUT: 0
     volumes:
       - agent_home:/home/agent

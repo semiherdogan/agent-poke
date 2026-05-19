@@ -1,4 +1,5 @@
 .git
+.env
 deploy.sh
 logs/*
 workspace/*
