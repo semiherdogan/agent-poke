@@ -1,7 +1,18 @@
 SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/bin
 
-0 6 * * * /app/scripts/run-checkin.sh
-6 11 * * * /app/scripts/run-checkin.sh
-12 16 * * * /app/scripts/run-checkin.sh
-18 21 * * * /app/scripts/run-checkin.sh
+0 6 * * * /app/scripts/run-checkin.sh claude
+6 11 * * * /app/scripts/run-checkin.sh claude
+12 16 * * * /app/scripts/run-checkin.sh claude
+18 21 * * * /app/scripts/run-checkin.sh claude
+
+18 5 * * * /app/scripts/run-checkin.sh codex
+24 10 * * * /app/scripts/run-checkin.sh codex
+30 15 * * * /app/scripts/run-checkin.sh codex
+36 20 * * * /app/scripts/run-checkin.sh codex
+
+# Ollama Cloud is opt-in. Uncomment after setting OLLAMA_API_KEY.
+#18 5 * * * /app/scripts/run-checkin.sh ollama
+#24 10 * * * /app/scripts/run-checkin.sh ollama
+#30 15 * * * /app/scripts/run-checkin.sh ollama
+#36 20 * * * /app/scripts/run-checkin.sh ollama

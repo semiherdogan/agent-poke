@@ -6,7 +6,7 @@ The container does not automate account login. The user logs in once through eac
 
 ## Schedule
 
-The schedule is static and shared by Codex and Claude.
+The schedule is static and provider-specific. See `config/schedule.cron` for active times and commented examples.
 
 The timezone is configured with `TZ` in `docker-compose.yml`. The default is:
 
@@ -14,21 +14,7 @@ The timezone is configured with `TZ` in `docker-compose.yml`. The default is:
 TZ: Europe/Istanbul
 ```
 
-Default times:
-
-- 06:00
-- 11:06
-- 16:12
-- 21:18
-
-These times are chosen for Claude's critical `09:00-19:00` usage window:
-
-- `06:00` opens the first window before work starts.
-- `11:06` is 5 hours + 6 minutes later.
-- `16:12` is another 5 hours + 6 minutes later and carries usage past 19:00.
-- `21:18` opens an evening window with a small buffer after the previous window.
-
-Codex uses the same static schedule. Change times in `config/schedule.cron` if needed.
+Change times in `config/schedule.cron` if needed.
 
 ## Quick Start
 

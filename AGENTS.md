@@ -14,9 +14,12 @@ Current supported agents:
 
 The scheduler is a Docker service. `supercronic` reads `config/schedule.cron` and runs `/app/scripts/run-checkin.sh`.
 
+The production schedule is provider-specific. `config/schedule.cron` is the source of truth for active times and commented examples.
+
 `run-checkin.sh`:
 
 - reads enabled agents from the `AGENTS` environment variable, defaulting to `codex claude`
+- ignores `AGENTS` when explicit agent names are passed, as the cron schedule does
 - starts enabled agents in parallel
 - writes logs to `logs/run-*.log`
 - keeps only the newest `LOG_KEEP` run logs
