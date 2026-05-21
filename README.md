@@ -1,8 +1,8 @@
 # agent-poke
 
-Runs Codex and Claude Code at fixed times with a tiny scheduled check-in message.
+Runs Codex, Claude Code, and optional Ollama Cloud check-ins at fixed times with a tiny scheduled message.
 
-The container does not automate account login. The user logs in once through each official CLI flow, and credentials stay in the persistent Docker home volume.
+The container does not automate Codex or Claude account login. The user logs in once through each official CLI flow, and credentials stay in the persistent Docker home volume. Ollama Cloud uses `OLLAMA_API_KEY` from the local environment.
 
 ## Schedule
 
@@ -67,7 +67,7 @@ docker compose up -d --build
 
 ## Login
 
-Login must be done by the user. API keys are not used.
+Codex and Claude login must be done by the user. Ollama Cloud uses `OLLAMA_API_KEY`.
 
 Codex uses the device auth flow:
 
@@ -114,13 +114,16 @@ Run one agent:
 ```sh
 docker compose run --rm agent-poke checkin codex
 docker compose run --rm agent-poke checkin claude
+docker compose run --rm agent-poke checkin ollama
 ```
 
-Check-ins use the same flow for both agents:
+Codex and Claude check-ins use the same interactive CLI flow:
 
 - start the interactive CLI with `CHECKIN_PROMPT` as the initial prompt
 - wait for output to settle
 - exit the CLI
+
+Ollama Cloud sends `CHECKIN_PROMPT` to the chat API with `OLLAMA_API_KEY`.
 
 Agents are started in parallel during the same scheduled run, so a slow response from one CLI does not delay the other.
 
@@ -134,7 +137,7 @@ After login, run one manual check so Codex and Claude can ask and remember any w
 docker compose run --rm agent-poke checkin
 ```
 
-Scheduled runs use the same interactive path. That keeps Codex and Claude behavior aligned with normal CLI usage instead of using programmatic modes like `codex exec` or `claude -p`.
+Scheduled Codex and Claude runs use the same interactive path. That keeps their behavior aligned with normal CLI usage instead of using programmatic modes like `codex exec` or `claude -p`.
 
 These check-ins make real model requests and count as usage for their respective CLIs.
 
@@ -215,7 +218,6 @@ Depending on your server setup, the `chown` command may need `sudo`.
 ## Roadmap
 
 - Optional session transcript summaries: read the latest local Codex and Claude JSONL session files and extract the final assistant reply for cleaner logs. This should stay opt-in because session transcripts may contain prompts, tool output, and file content. TUI output parsing is intentionally avoided.
-- Configurable per-agent schedules if the shared static schedule becomes too limiting.
 - Healthcheck command for validating login state, writable logs, workspace trust, and CLI availability before enabling the scheduler.
 
 ## License
